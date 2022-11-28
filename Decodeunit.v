@@ -10,14 +10,17 @@ module Decodeunit #(parameter width=32)(
     output [4:0] rd, [3:0] ALUcontrolinput,
     output [8:0] control, [4:0] Rs1,Rs2,
     output PCen,IFIDen);
+    
     wire controlmux,Pcen,ifid;
     wire [width-1:0] ReadData11,ReadData22,immediateOut;
     wire [1:0] ALUop;
     wire ALUSrc,MemtoReg,Regwrite,MemRead,MemWrite,Branch,Jump;
+    
     hazardunit H1(MemRead,Instruction[19:15],Instruction[24:20],RD,controlmux,Pcen,ifid);
     Maincontroller C1(Instruction[6:0],ALUSrc,MemtoReg,Regwrite,MemRead,MemWrite,Branch,Jump,ALUop);
     Registerfile #( width) RF1(clk,Regwrite,Instruction[19:15],Instruction[24:20],Rd,WriteData,ReadData11,ReadData22);
     Immediategeneration #(width) I1(Instruction,immediateOut);
+    
     assign PC=PC1;
     assign control=(controlmux==1'b1)?{ALUSrc,MemtoReg,Regwrite,MemRead,MemWrite,Branch,Jump,ALUop}:0;
     assign RD1=ReadData11;   //RD=READDATA
@@ -31,11 +34,4 @@ module Decodeunit #(parameter width=32)(
     assign IFIDen=ifid;
     
     
-    
-    
-    
-    
-    
-    
-
 endmodule
